@@ -19,7 +19,7 @@ after_success:
   # Take those images and push them to docker hub
   - docker push vncgrvs/multi-client
   - docker push vncgrvs/multi-nginx
-  - docker push vncgrvs/multi-server
+  - docker push vncgrvs/multi-serv
   - docker push vncgrvs/multi-worker
 
 deploy:

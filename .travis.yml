@@ -10,17 +10,17 @@ script:
   - docker run -e CI=true react-test npm test -- --coverage
 
 after_success:
-  - docker build -t multi-client ./client
-  - docker build -t multi-nginx ./nginx
-  - docker build -t multi-serv ./server
-  - docker build -t multi-worker ./worker
+  - docker build -t vncgrvs/multi-client ./client
+  - docker build -t vncgrvs/multi-nginx ./nginx
+  - docker build -t vncgrvs/multi-serv ./server
+  - docker build -t vncgrvs/multi-worker ./worker
   # Log in to the docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   # Take those images and push them to docker hub
-  - docker push multi-client
-  - docker push multi-nginx
-  - docker push multi-server
-  - docker push multi-worker
+  - docker push vncgrvs/multi-client
+  - docker push vncgrvs/multi-nginx
+  - docker push vncgrvs/multi-server
+  - docker push vncgrvs/multi-worker
 
 deploy:
   - provider: elasticbeanstalk

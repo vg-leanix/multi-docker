@@ -1,0 +1,37 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t vncgrvs/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run vncgrvs/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t vncgrvs/multi-client ./client
+  - docker build -t vncgrvs/multi-nginx ./nginx
+  - docker build -t vncgrvs/multi-server ./server
+  - docker build -t vncgrvs/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push vncgrvs/multi-client
+  - docker push vncgrvs/multi-nginx
+  - docker push vncgrvs/multi-server
+  - docker push vncgrvs/multi-worker
+
+deploy:
+  - provider: elasticbeanstalk
+    region: "us-east-2"
+    app: "docker-test"
+    env: "Dockertest-env"
+    bucket_name: "elasticbeanstalk-us-east-2-665598725239"
+    bucket_path: "docker-test"
+    on:
+      branch: master
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
+
+  - provider: script
+    script: bash run.sh $LIX_TOKEN
